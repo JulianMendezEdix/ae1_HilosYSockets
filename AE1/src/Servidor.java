@@ -11,11 +11,11 @@ import java.util.List;
 public class Servidor{
 	
 	public static final int PUERTO = 2018;
-	private static List<Pelicula> peliculas = new ArrayList<>();	
-	
+	private static List<Pelicula> peliculas = new ArrayList<>();
 
-	
 	public static void main(String[] args) {
+		
+		Servidor server = new Servidor(); // (La fiesta de blas) UN UNICO OBJETO Se la pasaremos a los hilos.
 		
 		// Inicializa las películas de ejemplo
 		
@@ -43,7 +43,7 @@ public class Servidor{
 				System.out.println("SERVIDOR: peticion numero " + ++peticion + " recibida");
 				//Abrimos un hilo nuevo y liberamos el hilo principal para que pueda
 				//recibir peticiones de otros clientes
-				new ServidorHilo(socketAlCliente);
+				new ServidorHilo(socketAlCliente, server);
 			}			
 		} catch (IOException e) {
 			System.err.println("SERVIDOR: Error de entrada/salida");
@@ -83,13 +83,11 @@ public class Servidor{
     }
     
     public synchronized boolean agregarPelicula(Pelicula nuevaPelicula) {
-         
-            // Realiza la lógica para agregar la película a la lista
-            // Aquí deberías garantizar que no haya problemas de concurrencia
-            // y agregar la película de manera segura
+    	
+    	System.out.println("Soy la pelicula" + nuevaPelicula + "y voy a guardarme");
     	
 		try {
-			Thread.sleep(10000);//un obrero descansa 10 segundos
+			Thread.sleep(20000);
 		} catch (InterruptedException e) {
 			e.printStackTrace();
 		}
@@ -105,6 +103,7 @@ public class Servidor{
     }
     
     private boolean peliculaExiste(String id) {
+    	
             for (Pelicula pelicula : peliculas) {
                 if (pelicula.getId().equals(id)) {
                     return true; // La película con el mismo ID ya existe

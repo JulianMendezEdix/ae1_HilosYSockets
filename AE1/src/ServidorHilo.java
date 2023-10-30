@@ -7,11 +7,10 @@ import java.net.Socket;
 import java.util.ArrayList;
 import java.util.List;
 
-//Este hilo va a contar el numero de letras que tiene la frase que le manda el 
-//cliente.
+//Este hilo va a recoger y procesar la información que le envía el cliente.
 
 //La conexion se mantendra abierta hasta que el cliente mande la palabra
-//"FIN" al servidor.
+//"SALIR" al servidor.
 
 //Recibe el socket que abre el servidor con el cliente y con el que
 //mantendra la conversacion
@@ -19,12 +18,14 @@ public class ServidorHilo implements Runnable{
 	
 	private Thread hilo;
 	private static int numCliente = 0;
-	private Socket socketAlCliente;	
+	private Socket socketAlCliente;
+	private Servidor servidor;
 	
-	public ServidorHilo(Socket socketAlCliente) {
+	public ServidorHilo(Socket socketAlCliente, Servidor servidor) {
 		numCliente++;
 		hilo = new Thread(this, "Cliente_"+numCliente);
 		this.socketAlCliente = socketAlCliente;
+		this.servidor = servidor;
 		hilo.start();
 	}
 	
@@ -45,7 +46,7 @@ public class ServidorHilo implements Runnable{
 			String opcion = "";
 			boolean continuar = true;
 			String texto = "";
-			Servidor server = new Servidor();
+			//Servidor server = new Servidor();
 			Pelicula pelicula;
 			List<Pelicula> peliculas = new ArrayList<>();
 			
@@ -60,7 +61,7 @@ public class ServidorHilo implements Runnable{
 				
 					case "1":
 						texto = palabras[1];
-						pelicula = server.buscarPeliculaPorID(texto);
+						pelicula = servidor.buscarPeliculaPorID(texto);
 						System.out.println(hilo.getName() + " da la ID: " + texto + " y corresponde a: " 
 								+ pelicula);
 						salida.println(pelicula);
@@ -68,7 +69,7 @@ public class ServidorHilo implements Runnable{
 						
 					case "2":
 						texto = palabras[1];
-						pelicula = server.buscarPeliculaPorTitulo(texto);
+						pelicula = servidor.buscarPeliculaPorTitulo(texto);
 						System.out.println(hilo.getName() + " da el titulo: " + texto + " y corresponde a: " 
 								+ pelicula);
 						salida.println(pelicula);
@@ -76,7 +77,7 @@ public class ServidorHilo implements Runnable{
 						
 					case "3":
 						texto = palabras[1];
-						peliculas = server.buscarPeliculasPorDirector(texto);
+						peliculas = servidor.buscarPeliculasPorDirector(texto);
 						System.out.println(hilo.getName() + " da el director: " + texto + " y corresponde a: " 
 								+ peliculas);
 						salida.println(peliculas);
@@ -84,7 +85,7 @@ public class ServidorHilo implements Runnable{
 					
 					case "4":
 						pelicula = new Pelicula(palabras[1],palabras[2], palabras[3], Double.parseDouble(palabras[4]));
-						boolean añadida = server.agregarPelicula(pelicula);
+						boolean añadida = servidor.agregarPelicula(pelicula);
 						System.out.println(añadida);
 						if (añadida) {
 							salida.println(hilo.getName() + " ha añadido:" + pelicula);}
